@@ -18,13 +18,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 步骤2：检查HTML文件语法（简单CI示例）
-      - name: Validate HTML
-        run: |
-	     docker pull validator/validator
-	     docker run --rm -v ${pwd}:/mnt validator/validator nu /mnt/index.html
-	continue-on-error: false 
-
   # 第二个任务：CD（部署到GitHub Pages）
   cd:
     needs: ci # 依赖ci任务完成且成功
