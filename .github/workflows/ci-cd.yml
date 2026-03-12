@@ -1,0 +1,41 @@
+# 工作流名称
+name: CI/CD for Static Page
+
+# 触发条件：main分支有push/PR，feature分支有PR
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master, 'feature/**' ]
+
+# 工作流任务
+jobs:
+  # 第一个任务：CI（代码检查）
+  ci:
+    runs-on: ubuntu-latest # 运行环境（Linux）
+    steps:
+      # 步骤1：拉取代码到GitHub服务器
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 步骤2：检查HTML文件语法（简单CI示例）
+      - name: Validate HTML
+        uses: chabad360/html5validator@v1
+        with:
+          root: ./ # 检查当前目录的HTML文件
+
+  # 第二个任务：CD（部署到GitHub Pages）
+  cd:
+    needs: ci # 依赖ci任务完成且成功
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' # 仅main分支push时触发
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 步骤：部署到GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} # GitHub自动生成的令牌（无需手动配置）
+          publish_dir: ./ # 部署的目录（当前目录的所有文件）
