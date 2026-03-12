@@ -20,9 +20,10 @@ jobs:
 
       # 步骤2：检查HTML文件语法（简单CI示例）
       - name: Validate HTML
-        uses: chabad360/html5validator@v1
-        with:
-          root: ./ # 检查当前目录的HTML文件
+        run: |
+	     docker pull validator/validator
+	     docker run --rm -v ${pwd}:/mnt validator/validator nu /mnt/index.html
+	continue-on-error: false 
 
   # 第二个任务：CD（部署到GitHub Pages）
   cd:
